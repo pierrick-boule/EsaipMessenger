@@ -53,9 +53,6 @@ public class Liste extends Activity {
 	 */
 	@AfterViews
 	void after() {
-
-		adapter = new MessagingAdapter(getApplicationContext(),
-				R.layout.message_bulle);
 		newMessage.setOnKeyListener(new OnKeyListener() {
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
 				if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) {
@@ -77,6 +74,8 @@ public class Liste extends Activity {
 	 */
 	@Background
 	void getmessages(){
+		adapter = new MessagingAdapter(getApplicationContext(),
+				R.layout.message_bulle);
 		String messages = myRestClient.getMessages(sprefs.username().get(), sprefs.password().get());
 		String messagesArray[]=messages.split(";");
 		for (String message : messagesArray) {
@@ -95,9 +94,10 @@ public class Liste extends Activity {
 	 */
 	@UiThread
 	void updateui(){
-		
 		listViewMessages.setAdapter(adapter);
-		newMessage.setText("");
+		adapter.notifyDataSetChanged();
+		listViewMessages.refreshDrawableState();
+		listViewMessages.invalidate();
 	}
 	
 	/**
@@ -106,6 +106,7 @@ public class Liste extends Activity {
 	@Background
 	void sendmessage(){
 		myRestClient.postMessage(sprefs.username().get(), sprefs.password().get(), newMessage.getText().toString());
+		newMessage.setText("");
 		updateui();
 	}
 	
@@ -115,7 +116,6 @@ public class Liste extends Activity {
 	@Click(R.id.refresh)
 	void send() {
 		getmessages();
-		updateui();
 	}
 	
 	/**

@@ -5,17 +5,16 @@
 
 package org.esaip.messenger;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.ProgressBar;
 import com.googlecode.androidannotations.api.BackgroundExecutor;
-import com.googlecode.androidannotations.api.SdkVersionHelper;
 import org.esaip.messenger.R.id;
 import org.esaip.messenger.R.layout;
 import org.esaip.messenger.rest.RestClient_;
@@ -60,14 +59,6 @@ public final class Dashboard_
     public void setContentView(View view) {
         super.setContentView(view);
         afterSetContentView_();
-    }
-
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (((SdkVersionHelper.getSdkInt()< 5)&&(keyCode == KeyEvent.KEYCODE_BACK))&&(event.getRepeatCount() == 0)) {
-            onBackPressed();
-        }
-        return super.onKeyDown(keyCode, event);
     }
 
     public static Dashboard_.IntentBuilder_ intent(Context context) {
@@ -149,6 +140,14 @@ public final class Dashboard_
 
         public void start() {
             context_.startActivity(intent_);
+        }
+
+        public void startForResult(int requestCode) {
+            if (context_ instanceof Activity) {
+                ((Activity) context_).startActivityForResult(intent_, requestCode);
+            } else {
+                context_.startActivity(intent_);
+            }
         }
 
     }

@@ -1,6 +1,7 @@
 package org.esaip.messenger.rest;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
 
 import com.googlecode.androidannotations.annotations.rest.Accept;
 import com.googlecode.androidannotations.annotations.rest.Get;
@@ -11,7 +12,7 @@ import com.googlecode.androidannotations.api.rest.MediaType;
 /**
  * Une interface RestClient.
  */
-@Rest("http://parlezvous.herokuapp.com")
+@Rest(rootUrl = "http://parlezvous.herokuapp.com", converters = { StringHttpMessageConverter.class  })
 public interface RestClient {
 
 	/**

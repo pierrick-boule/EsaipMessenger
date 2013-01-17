@@ -5,12 +5,12 @@
 
 package org.esaip.messenger;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,7 +20,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.EditText;
 import android.widget.ListView;
 import com.googlecode.androidannotations.api.BackgroundExecutor;
-import com.googlecode.androidannotations.api.SdkVersionHelper;
 import org.esaip.messenger.R.id;
 import org.esaip.messenger.R.layout;
 import org.esaip.messenger.rest.RestClient_;
@@ -45,8 +44,8 @@ public final class Liste_
     }
 
     private void afterSetContentView_() {
-        newMessage = ((EditText) findViewById(id.newMessage));
         listViewMessages = ((ListView) findViewById(id.listViewMessages));
+        newMessage = ((EditText) findViewById(id.newMessage));
         {
             View view = findViewById(id.refresh);
             if (view!= null) {
@@ -83,14 +82,6 @@ public final class Liste_
         afterSetContentView_();
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (((SdkVersionHelper.getSdkInt()< 5)&&(keyCode == KeyEvent.KEYCODE_BACK))&&(event.getRepeatCount() == 0)) {
-            onBackPressed();
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     public static Liste_.IntentBuilder_ intent(Context context) {
         return new Liste_.IntentBuilder_(context);
     }
@@ -108,13 +99,12 @@ public final class Liste_
         if (handled) {
             return true;
         }
-        switch (item.getItemId()) {
-            case id.deco:
-                decoSelected();
-                return true;
-            default:
-                return false;
+        int itemId_ = item.getItemId();
+        if (itemId_ == id.deco) {
+            decoSelected();
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -136,14 +126,14 @@ public final class Liste_
     }
 
     @Override
-    public void sendmessage() {
+    public void getmessages() {
         BackgroundExecutor.execute(new Runnable() {
 
 
             @Override
             public void run() {
                 try {
-                    Liste_.super.sendmessage();
+                    Liste_.super.getmessages();
                 } catch (RuntimeException e) {
                     Log.e("Liste_", "A runtime exception was thrown while executing code in a runnable", e);
                 }
@@ -154,14 +144,14 @@ public final class Liste_
     }
 
     @Override
-    public void getmessages() {
+    public void sendmessage() {
         BackgroundExecutor.execute(new Runnable() {
 
 
             @Override
             public void run() {
                 try {
-                    Liste_.super.getmessages();
+                    Liste_.super.sendmessage();
                 } catch (RuntimeException e) {
                     Log.e("Liste_", "A runtime exception was thrown while executing code in a runnable", e);
                 }
@@ -192,6 +182,14 @@ public final class Liste_
 
         public void start() {
             context_.startActivity(intent_);
+        }
+
+        public void startForResult(int requestCode) {
+            if (context_ instanceof Activity) {
+                ((Activity) context_).startActivityForResult(intent_, requestCode);
+            } else {
+                context_.startActivity(intent_);
+            }
         }
 
     }

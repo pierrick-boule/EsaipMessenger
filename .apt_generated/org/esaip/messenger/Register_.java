@@ -5,12 +5,12 @@
 
 package org.esaip.messenger;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -18,7 +18,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.googlecode.androidannotations.api.BackgroundExecutor;
-import com.googlecode.androidannotations.api.SdkVersionHelper;
 import org.esaip.messenger.R.id;
 import org.esaip.messenger.R.layout;
 import org.esaip.messenger.rest.RestClient_;
@@ -43,26 +42,11 @@ public final class Register_
     }
 
     private void afterSetContentView_() {
+        editPassword2 = ((EditText) findViewById(id.editPassword2));
+        editLogin = ((EditText) findViewById(id.editLogin));
         progressBar = ((ProgressBar) findViewById(id.progressBar));
         editPassword = ((EditText) findViewById(id.editPassword));
         error = ((TextView) findViewById(id.error));
-        editPassword2 = ((EditText) findViewById(id.editPassword2));
-        editLogin = ((EditText) findViewById(id.editLogin));
-        {
-            View view = findViewById(id.bEnvoyer);
-            if (view!= null) {
-                view.setOnClickListener(new OnClickListener() {
-
-
-                    @Override
-                    public void onClick(View view) {
-                        Register_.this.envoyer();
-                    }
-
-                }
-                );
-            }
-        }
         {
             View view = findViewById(id.bVider);
             if (view!= null) {
@@ -72,6 +56,21 @@ public final class Register_
                     @Override
                     public void onClick(View view) {
                         Register_.this.vider();
+                    }
+
+                }
+                );
+            }
+        }
+        {
+            View view = findViewById(id.bEnvoyer);
+            if (view!= null) {
+                view.setOnClickListener(new OnClickListener() {
+
+
+                    @Override
+                    public void onClick(View view) {
+                        Register_.this.envoyer();
                     }
 
                 }
@@ -98,34 +97,8 @@ public final class Register_
         afterSetContentView_();
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (((SdkVersionHelper.getSdkInt()< 5)&&(keyCode == KeyEvent.KEYCODE_BACK))&&(event.getRepeatCount() == 0)) {
-            onBackPressed();
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     public static Register_.IntentBuilder_ intent(Context context) {
         return new Register_.IntentBuilder_(context);
-    }
-
-    @Override
-    public void startError() {
-        handler_.post(new Runnable() {
-
-
-            @Override
-            public void run() {
-                try {
-                    Register_.super.startError();
-                } catch (RuntimeException e) {
-                    Log.e("Register_", "A runtime exception was thrown while executing code in a runnable", e);
-                }
-            }
-
-        }
-        );
     }
 
     @Override
@@ -137,6 +110,24 @@ public final class Register_
             public void run() {
                 try {
                     Register_.super.startConnected();
+                } catch (RuntimeException e) {
+                    Log.e("Register_", "A runtime exception was thrown while executing code in a runnable", e);
+                }
+            }
+
+        }
+        );
+    }
+
+    @Override
+    public void startError() {
+        handler_.post(new Runnable() {
+
+
+            @Override
+            public void run() {
+                try {
+                    Register_.super.startError();
                 } catch (RuntimeException e) {
                     Log.e("Register_", "A runtime exception was thrown while executing code in a runnable", e);
                 }
@@ -185,6 +176,14 @@ public final class Register_
 
         public void start() {
             context_.startActivity(intent_);
+        }
+
+        public void startForResult(int requestCode) {
+            if (context_ instanceof Activity) {
+                ((Activity) context_).startActivityForResult(intent_, requestCode);
+            } else {
+                context_.startActivity(intent_);
+            }
         }
 
     }

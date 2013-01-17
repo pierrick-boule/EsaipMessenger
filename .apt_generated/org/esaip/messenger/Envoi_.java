@@ -5,12 +5,12 @@
 
 package org.esaip.messenger;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -20,7 +20,6 @@ import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import com.googlecode.androidannotations.api.BackgroundExecutor;
-import com.googlecode.androidannotations.api.SdkVersionHelper;
 import org.esaip.messenger.R.id;
 import org.esaip.messenger.R.layout;
 import org.esaip.messenger.rest.RestClient_;
@@ -45,8 +44,8 @@ public final class Envoi_
     }
 
     private void afterSetContentView_() {
-        messagetosend = ((EditText) findViewById(id.messagetosend));
         bEnvoyerMsg = ((Button) findViewById(id.bEnvoyerMsg));
+        messagetosend = ((EditText) findViewById(id.messagetosend));
         {
             View view = findViewById(id.bEnvoyerMsg);
             if (view!= null) {
@@ -82,14 +81,6 @@ public final class Envoi_
         afterSetContentView_();
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (((SdkVersionHelper.getSdkInt()< 5)&&(keyCode == KeyEvent.KEYCODE_BACK))&&(event.getRepeatCount() == 0)) {
-            onBackPressed();
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     public static Envoi_.IntentBuilder_ intent(Context context) {
         return new Envoi_.IntentBuilder_(context);
     }
@@ -107,13 +98,12 @@ public final class Envoi_
         if (handled) {
             return true;
         }
-        switch (item.getItemId()) {
-            case id.deco:
-                decoSelected();
-                return true;
-            default:
-                return false;
+        int itemId_ = item.getItemId();
+        if (itemId_ == id.deco) {
+            decoSelected();
+            return true;
         }
+        return false;
     }
 
     @Override
@@ -173,6 +163,14 @@ public final class Envoi_
 
         public void start() {
             context_.startActivity(intent_);
+        }
+
+        public void startForResult(int requestCode) {
+            if (context_ instanceof Activity) {
+                ((Activity) context_).startActivityForResult(intent_, requestCode);
+            } else {
+                context_.startActivity(intent_);
+            }
         }
 
     }

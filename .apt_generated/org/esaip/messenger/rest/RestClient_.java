@@ -12,7 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 public class RestClient_
@@ -24,15 +24,8 @@ public class RestClient_
 
     public RestClient_() {
         restTemplate = new RestTemplate();
+        restTemplate.getMessageConverters().add(new StringHttpMessageConverter());
         rootUrl = "http://parlezvous.herokuapp.com";
-    }
-
-    public RestClient_(RestTemplate restTemplate) {
-        this.restTemplate = restTemplate;
-    }
-
-    public RestClient_(ClientHttpRequestFactory requestFactory) {
-        restTemplate = new RestTemplate(requestFactory);
     }
 
     @Override
@@ -72,7 +65,7 @@ public class RestClient_
         urlVariables.put("username", username);
         urlVariables.put("password", password);
         HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setAccept(Collections.singletonList(MediaType.APPLICATION_XHTML_XML));
+        httpHeaders.setAccept(Collections.singletonList(MediaType.parseMediaType("application/xhtml+xml")));
         HttpEntity<Object> requestEntity = new HttpEntity<Object>(httpHeaders);
         return restTemplate.exchange(rootUrl.concat("/subscribe?username={username}&password={password}"), HttpMethod.POST, requestEntity, String.class, urlVariables);
     }

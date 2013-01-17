@@ -5,12 +5,12 @@
 
 package org.esaip.messenger;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
@@ -19,7 +19,6 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import com.googlecode.androidannotations.api.BackgroundExecutor;
-import com.googlecode.androidannotations.api.SdkVersionHelper;
 import org.esaip.messenger.R.id;
 import org.esaip.messenger.R.layout;
 import org.esaip.messenger.rest.RestClient_;
@@ -45,26 +44,11 @@ public final class Login_
 
     private void afterSetContentView_() {
         editLogin = ((EditText) findViewById(id.editLogin));
-        error = ((TextView) findViewById(id.error));
         bEnvoyer = ((Button) findViewById(id.bEnvoyer));
-        bVider = ((Button) findViewById(id.bVider));
         progressBar = ((ProgressBar) findViewById(id.progressBar));
+        bVider = ((Button) findViewById(id.bVider));
         editPassword = ((EditText) findViewById(id.editPassword));
-        {
-            View view = findViewById(id.register);
-            if (view!= null) {
-                view.setOnClickListener(new OnClickListener() {
-
-
-                    @Override
-                    public void onClick(View view) {
-                        Login_.this.register();
-                    }
-
-                }
-                );
-            }
-        }
+        error = ((TextView) findViewById(id.error));
         {
             View view = findViewById(id.bVider);
             if (view!= null) {
@@ -74,6 +58,21 @@ public final class Login_
                     @Override
                     public void onClick(View view) {
                         Login_.this.vider();
+                    }
+
+                }
+                );
+            }
+        }
+        {
+            View view = findViewById(id.register);
+            if (view!= null) {
+                view.setOnClickListener(new OnClickListener() {
+
+
+                    @Override
+                    public void onClick(View view) {
+                        Login_.this.register();
                     }
 
                 }
@@ -115,34 +114,8 @@ public final class Login_
         afterSetContentView_();
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (((SdkVersionHelper.getSdkInt()< 5)&&(keyCode == KeyEvent.KEYCODE_BACK))&&(event.getRepeatCount() == 0)) {
-            onBackPressed();
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     public static Login_.IntentBuilder_ intent(Context context) {
         return new Login_.IntentBuilder_(context);
-    }
-
-    @Override
-    public void startError() {
-        handler_.post(new Runnable() {
-
-
-            @Override
-            public void run() {
-                try {
-                    Login_.super.startError();
-                } catch (RuntimeException e) {
-                    Log.e("Login_", "A runtime exception was thrown while executing code in a runnable", e);
-                }
-            }
-
-        }
-        );
     }
 
     @Override
@@ -154,6 +127,24 @@ public final class Login_
             public void run() {
                 try {
                     Login_.super.startConnected();
+                } catch (RuntimeException e) {
+                    Log.e("Login_", "A runtime exception was thrown while executing code in a runnable", e);
+                }
+            }
+
+        }
+        );
+    }
+
+    @Override
+    public void startError() {
+        handler_.post(new Runnable() {
+
+
+            @Override
+            public void run() {
+                try {
+                    Login_.super.startError();
                 } catch (RuntimeException e) {
                     Log.e("Login_", "A runtime exception was thrown while executing code in a runnable", e);
                 }
@@ -202,6 +193,14 @@ public final class Login_
 
         public void start() {
             context_.startActivity(intent_);
+        }
+
+        public void startForResult(int requestCode) {
+            if (context_ instanceof Activity) {
+                ((Activity) context_).startActivityForResult(intent_, requestCode);
+            } else {
+                context_.startActivity(intent_);
+            }
         }
 
     }

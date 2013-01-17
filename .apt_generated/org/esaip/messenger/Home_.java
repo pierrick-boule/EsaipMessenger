@@ -5,10 +5,10 @@
 
 package org.esaip.messenger;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -16,7 +16,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
-import com.googlecode.androidannotations.api.SdkVersionHelper;
 import org.esaip.messenger.R.id;
 import org.esaip.messenger.R.layout;
 import org.esaip.messenger.util.MyPrefs_;
@@ -41,21 +40,6 @@ public final class Home_
         buttonEnvoi = ((Button) findViewById(id.buttonEnvoi));
         buttonList = ((Button) findViewById(id.buttonList));
         {
-            View view = findViewById(id.buttonEnvoi);
-            if (view!= null) {
-                view.setOnClickListener(new OnClickListener() {
-
-
-                    @Override
-                    public void onClick(View view) {
-                        Home_.this.envoi();
-                    }
-
-                }
-                );
-            }
-        }
-        {
             View view = findViewById(id.buttonList);
             if (view!= null) {
                 view.setOnClickListener(new OnClickListener() {
@@ -64,6 +48,21 @@ public final class Home_
                     @Override
                     public void onClick(View view) {
                         Home_.this.liste();
+                    }
+
+                }
+                );
+            }
+        }
+        {
+            View view = findViewById(id.buttonEnvoi);
+            if (view!= null) {
+                view.setOnClickListener(new OnClickListener() {
+
+
+                    @Override
+                    public void onClick(View view) {
+                        Home_.this.envoi();
                     }
 
                 }
@@ -90,14 +89,6 @@ public final class Home_
         afterSetContentView_();
     }
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (((SdkVersionHelper.getSdkInt()< 5)&&(keyCode == KeyEvent.KEYCODE_BACK))&&(event.getRepeatCount() == 0)) {
-            onBackPressed();
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-
     public static Home_.IntentBuilder_ intent(Context context) {
         return new Home_.IntentBuilder_(context);
     }
@@ -115,13 +106,12 @@ public final class Home_
         if (handled) {
             return true;
         }
-        switch (item.getItemId()) {
-            case id.deco:
-                decoSelected();
-                return true;
-            default:
-                return false;
+        int itemId_ = item.getItemId();
+        if (itemId_ == id.deco) {
+            decoSelected();
+            return true;
         }
+        return false;
     }
 
     public static class IntentBuilder_ {
@@ -145,6 +135,14 @@ public final class Home_
 
         public void start() {
             context_.startActivity(intent_);
+        }
+
+        public void startForResult(int requestCode) {
+            if (context_ instanceof Activity) {
+                ((Activity) context_).startActivityForResult(intent_, requestCode);
+            } else {
+                context_.startActivity(intent_);
+            }
         }
 
     }
